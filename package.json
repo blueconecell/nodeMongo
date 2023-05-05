@@ -19,7 +19,7 @@
   "homepage": "https://github.com/blueconecell/nodeMongo#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "mongodb": "^3.6.3"
+    "mongodb": "^3.7.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

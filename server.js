@@ -7,6 +7,7 @@ MongoClient.connect(
   "mongodb+srv://kimjeongyeon113:smart123@cluster0.vr7efrs.mongodb.net/?retryWrites=true&w=majority",
   { useUnifiedTopology: true },
   function (에러, client) {
+    console.log("시작됨??")
     // 연결되면 할일
     if (에러) return console.log(에러);
 
