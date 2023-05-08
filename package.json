@@ -1,29 +1,15 @@
 {
-  "name": "nodemongo",
+  "name": "nodemongotest",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/blueconecell/nodeMongo.git"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/blueconecell/nodeMongo/issues"
-  },
-  "homepage": "https://github.com/blueconecell/nodeMongo#readme",
   "dependencies": {
-    "body-parser": "^1.20.2",
     "express": "^4.18.2",
-    "mongodb": "^3.7.3",
-    "supervisor": "^0.12.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.14-alpha.1"
   }
 }

@@ -1,1 +1,0 @@
-mongodb+srv://kimjeongyeon113:<password>@cluster0.vr7efrs.mongodb.net/?retryWrites=true&w=majority
