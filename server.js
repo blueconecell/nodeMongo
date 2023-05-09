@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
 const request = require("request");
-const youtubeAPI = "AIzaSyBcB4AaEFGTrK0-dk26PFi95WMWdLoWqlM";
+const youtubeAPI_URL = "AIzaSyBcB4AaEFGTrK0-dk26PFi95WMWdLoWqlM";
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
