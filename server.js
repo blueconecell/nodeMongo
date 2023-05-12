@@ -37,11 +37,18 @@ MongoClient.connect(
 
     app.post("/add", function (요청, 응답) {
       console.log(요청.body);
-      db.collection("post").insertOne({ title: 요청.body.title, date: 요청.body.date }, function (에러, 결과) {
-        console.log("db저장완료");
-      });
-      응답.send("전송완료");
+      db.collection("counter").findOne({name:'게시물 갯수'}, function(에러, 결과){
+        console.log(결과.totalPost)
+        var totalPost = 결과.totalPost;
+        db.collection("post").insertOne({_id:totalPost, title: 요청.body.title, date: 요청.body.date }, function (에러, 결과) {
+          console.log("db저장완료");
+        });
+      })
+
+      응답.sendFile(__dirname + "/write.html");
     });
+
+    
   }
 );
 
