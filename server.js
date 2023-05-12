@@ -42,6 +42,10 @@ MongoClient.connect(
         var totalPost = 결과.totalPost;
         db.collection("post").insertOne({_id:totalPost, title: 요청.body.title, date: 요청.body.date }, function (에러, 결과) {
           console.log("db저장완료");
+
+          db.collection("counter").updateOne({name:'게시물 갯수'},{ $inc : {totalPost:1} },function(에러,결과){
+            if(에러) return console.log(에러)
+          })
         });
       })
 
