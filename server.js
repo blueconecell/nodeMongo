@@ -62,3 +62,10 @@ app.get("/", function (요청, 응답) {
 app.get("/write", function (요청, 응답) {
   응답.sendFile(__dirname + "/write.html");
 });
+app.delete('/delete',function(요청, 응답){
+  요청.body._id = parseInt(요청.body._id)
+  db.collection('post').deleteOne(요청.body, function(에러, 결과){
+    console.log('삭제완료')
+  })
+  응답.send('삭제완료')
+})
