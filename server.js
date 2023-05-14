@@ -37,22 +37,20 @@ MongoClient.connect(
 
     app.post("/add", function (요청, 응답) {
       console.log(요청.body);
-      db.collection("counter").findOne({name:'게시물 갯수'}, function(에러, 결과){
-        console.log(결과.totalPost)
+      db.collection("counter").findOne({ name: "게시물 갯수" }, function (에러, 결과) {
+        console.log(결과.totalPost);
         var totalPost = 결과.totalPost;
-        db.collection("post").insertOne({_id:totalPost, title: 요청.body.title, date: 요청.body.date }, function (에러, 결과) {
+        db.collection("post").insertOne({ _id: totalPost, title: 요청.body.title, date: 요청.body.date }, function (에러, 결과) {
           console.log("db저장완료");
 
-          db.collection("counter").updateOne({name:'게시물 갯수'},{ $inc : {totalPost:1} },function(에러,결과){
-            if(에러) return console.log(에러)
-          })
+          db.collection("counter").updateOne({ name: "게시물 갯수" }, { $inc: { totalPost: 1 } }, function (에러, 결과) {
+            if (에러) return console.log(에러);
+          });
         });
-      })
+      });
 
       응답.sendFile(__dirname + "/write.html");
     });
-
-    
   }
 );
 
@@ -62,10 +60,11 @@ app.get("/", function (요청, 응답) {
 app.get("/write", function (요청, 응답) {
   응답.sendFile(__dirname + "/write.html");
 });
-app.delete('/delete',function(요청, 응답){
-  요청.body._id = parseInt(요청.body._id)
-  db.collection('post').deleteOne(요청.body, function(에러, 결과){
-    console.log('삭제완료')
-  })
-  응답.send('삭제완료')
-})
+app.delete("/delete", function (요청, 응답) {
+  요청.body._id = parseInt(요청.body._id);
+  db.collection("post").deleteOne(요청.body, function (에러, 결과) {
+    console.log("삭제완료");
+    응답.status(200).send({ message: "성공했음." });
+  });
+  응답.send("삭제완료");
+});
