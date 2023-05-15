@@ -68,3 +68,10 @@ app.delete("/delete", function (요청, 응답) {
   });
   응답.send("삭제완료");
 });
+
+app.get("/detail/:postId", function (요청, 응답) {
+  db.collection("post").findOne({ _id: parseInt(요청.params.postId) }, function (에러, 결과) {
+    console.log(결과);
+    응답.render("detail.ejs", { data: 결과 });
+  });
+});
