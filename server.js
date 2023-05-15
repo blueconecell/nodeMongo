@@ -6,6 +6,7 @@ const youtubeAPI_URL = "AIzaSyBcB4AaEFGTrK0-dk26PFi95WMWdLoWqlM";
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use("/public", express.static("public")); //미들웨어
 var db;
 MongoClient.connect(
   "mongodb+srv://kimjeongyeon113:smart123@cluster0.vr7efrs.mongodb.net/?retryWrites=true&w=majority",
@@ -49,16 +50,16 @@ MongoClient.connect(
         });
       });
 
-      응답.sendFile(__dirname + "/write.html");
+      응답.render("write.ejs");
     });
   }
 );
 
 app.get("/", function (요청, 응답) {
-  응답.sendFile(__dirname + "/index.html");
+  응답.render("index.ejs");
 });
 app.get("/write", function (요청, 응답) {
-  응답.sendFile(__dirname + "/write.html");
+  응답.render("write.ejs");
 });
 app.delete("/delete", function (요청, 응답) {
   요청.body._id = parseInt(요청.body._id);
