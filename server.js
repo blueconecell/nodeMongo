@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
-const request = require("request");
 const youtubeAPI_URL = "AIzaSyBcB4AaEFGTrK0-dk26PFi95WMWdLoWqlM";
 
 app.set("view engine", "ejs");
