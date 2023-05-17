@@ -3,3 +3,10 @@
 * {
   font-family: "Hahmlet", serif;
 }
+.btn-outline-success {
+  background-color: #28a745;
+  color: white;
+}
+.btn-outline-success:hover {
+  transform: scale(1.1);
+}

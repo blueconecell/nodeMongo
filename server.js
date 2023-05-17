@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
-const youtubeAPI_URL = "AIzaSyBcB4AaEFGTrK0-dk26PFi95WMWdLoWqlM";
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -73,5 +74,25 @@ app.get("/detail/:postId", function (요청, 응답) {
   db.collection("post").findOne({ _id: parseInt(요청.params.postId) }, function (에러, 결과) {
     console.log(결과);
     응답.render("detail.ejs", { data: 결과 });
+  });
+});
+
+app.get("/edit/:postId", function (요청, 응답) {
+  db.collection("post").findOne({ _id: parseInt(요청.params.postId) }, function (에러, 결과) {
+    if (에러) {
+      응답.status(400).send({ message: "오류발생." });
+      return console.log(에러);
+    } else {
+      console.log(결과);
+      응답.render("edit.ejs", { data: 결과 });
+    }
+  });
+});
+
+// put요청 form에서 가져온 title, date정보를 db에 업데이트
+app.put("/edit", function (요청, 응답) {
+  db.collection("post").updateOne({ _id: parseInt(요청.body.id) }, { $set: { title: 요청.body.title, date: 요청.body.date } }, function (에러, 결과) {
+    console.log("수정완료");
+    응답.redirect("/list");
   });
 });
