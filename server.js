@@ -6,6 +6,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 
+require("dotenv").config;
+
 // 미들웨어 3개
 // 미들웨어: 요청과 응답 중간에 app.use를 사용하여 중간에 동작시키는 것
 app.use(session({ secret: "kitchengun", resave: true, saveUninitialized: false }));
@@ -121,6 +123,23 @@ app.post(
   }
 );
 
+// 마이페이지
+app.get("/mypage", 로그인했니, function (요청, 응답) {
+  console.log(요청.user);
+  응답.render("mypage.ejs", { 사용자: 요청.user });
+});
+
+// 미들웨어 -> 로그인 했는지 안했는지 확인하는 기능
+// 요청.user는 로그인한 user의 아이디 비번값을 갖고 있다.
+function 로그인했니(요청, 응답, next) {
+  if (요청.user) {
+    console.log(요청.user);
+    next();
+  } else {
+    응답.send("로그인 안하셨는데요?");
+  }
+}
+
 passport.use(
   new LocalStrategy(
     {
@@ -149,5 +168,10 @@ passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
 passport.deserializeUser(function (아이디, done) {
-  done(null, {});
+  // 위에있는 user.id == (파라미터) '아이디'
+
+  // db에서 user.id로 유저를 찾은 뒤 유저정보를 표시
+  db.collection("login").findOne({ id: 아이디 }, function (에러, 결과) {
+    done(null, 결과);
+  });
 });
