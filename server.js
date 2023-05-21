@@ -45,6 +45,16 @@ MongoClient.connect(
         });
     });
 
+    // list -> search part
+    app.get("/search", (요청, 응답) => {
+      db.collection("post")
+        .find({ title: 요청.query.value })
+        .toArray((에러, 결과) => {
+          console.log(결과);
+          응답.render("search.ejs", { posts: 결과 });
+        });
+    });
+
     // db post part
 
     app.post("/add", function (요청, 응답) {
