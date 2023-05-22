@@ -47,8 +47,28 @@ MongoClient.connect(
 
     // list -> search part
     app.get("/search", (요청, 응답) => {
+      var 검색조건 = [
+        {
+          $search: {
+            index: "titleSearch",
+            text: {
+              query: 요청.query.value,
+              path: "title", // 제목 날짜  둘다 찾고 싶으면 ['title','date']
+            },
+          },
+        },
+        {
+          $sort: { _id: 1 },
+        },
+        {
+          $limit: 10,
+        },
+        // {
+        //   $project: { title: 1, _id: 0, score: { $meta: "searchScore" } },
+        // },
+      ];
       db.collection("post")
-        .find({ title: 요청.query.value })
+        .aggregate(검색조건)
         .toArray((에러, 결과) => {
           console.log(결과);
           응답.render("search.ejs", { posts: 결과 });
@@ -56,23 +76,6 @@ MongoClient.connect(
     });
 
     // db post part
-
-    app.post("/add", function (요청, 응답) {
-      console.log(요청.body);
-      db.collection("counter").findOne({ name: "게시물 갯수" }, function (에러, 결과) {
-        console.log(결과.totalPost);
-        var totalPost = 결과.totalPost;
-        db.collection("post").insertOne({ _id: totalPost, title: 요청.body.title, date: 요청.body.date }, function (에러, 결과) {
-          console.log("db저장완료");
-
-          db.collection("counter").updateOne({ name: "게시물 갯수" }, { $inc: { totalPost: 1 } }, function (에러, 결과) {
-            if (에러) return console.log(에러);
-          });
-        });
-      });
-
-      응답.render("write.ejs");
-    });
   }
 );
 
@@ -81,14 +84,6 @@ app.get("/", function (요청, 응답) {
 });
 app.get("/write", function (요청, 응답) {
   응답.render("write.ejs");
-});
-app.delete("/delete", function (요청, 응답) {
-  요청.body._id = parseInt(요청.body._id);
-  db.collection("post").deleteOne(요청.body, function (에러, 결과) {
-    console.log("삭제완료");
-    응답.status(200).send({ message: "성공했음." });
-  });
-  응답.send("삭제완료");
 });
 
 app.get("/detail/:postId", function (요청, 응답) {
@@ -184,4 +179,40 @@ passport.deserializeUser(function (아이디, done) {
   db.collection("login").findOne({ id: 아이디 }, function (에러, 결과) {
     done(null, 결과);
   });
+});
+
+app.post("/register", function (요청, 응답) {
+  db.collection("login").insertOne({ id: 요청.body.id, pw: 요청.body.pw }, function (에러, 결과) {
+    응답.redirect("/");
+  });
+});
+
+app.post("/add", function (요청, 응답) {
+  console.log(요청.body);
+  db.collection("counter").findOne({ name: "게시물 갯수" }, function (에러, 결과) {
+    console.log(결과.totalPost);
+    var totalPost = 결과.totalPost;
+    var 저장할거 = { _id: totalPost, title: 요청.body.title, date: 요청.body.date, author: 요청.user._id };
+    db.collection("post").insertOne(저장할거, function (에러, 결과) {
+      console.log("db저장완료");
+
+      db.collection("counter").updateOne({ name: "게시물 갯수" }, { $inc: { totalPost: 1 } }, function (에러, 결과) {
+        if (에러) return console.log(에러);
+      });
+    });
+  });
+
+  응답.render("write.ejs");
+});
+
+app.delete("/delete", function (요청, 응답) {
+  요청.body._id = parseInt(요청.body._id);
+
+  var 삭제할데이터 = { _id: 요청.body._id, author: 요청.user._id };
+  db.collection("post").deleteOne(삭제할데이터, function (에러, 결과) {
+    console.log("삭제완료");
+    if (결과) console.log(결과);
+    응답.status(200).send({ message: "성공했음." });
+  });
+  응답.send("삭제완료");
 });
