@@ -216,3 +216,8 @@ app.delete("/delete", function (요청, 응답) {
   });
   응답.send("삭제완료");
 });
+
+// app.use는 미들웨어를 쓰고 싶으면 쓰는 것이다.
+// 미들웨어는 요청과 응답 사이에 실행되는 코드이다.
+app.use("/shop", require("./routes/shop.js"));
+app.use("/board/sub", require("./routes/board.js"));
