@@ -30,8 +30,8 @@ MongoClient.connect(
     // db.collection("post").insertOne({ 이름: "JeongYeon", 나이: 24 }, function (에러, 결과) {
     //   console.log("db저장완료");
     // });
-    app.listen(3000, function () {
-      console.log("listening on 3000");
+    app.listen(8080, function () {
+      console.log("listening on 8080");
     });
 
     // db get part
