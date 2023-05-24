@@ -5,7 +5,7 @@ const methodOverride = require("method-override");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
-
+let multer = require("multer");
 require("dotenv").config;
 
 // 미들웨어 3개
@@ -221,3 +221,47 @@ app.delete("/delete", function (요청, 응답) {
 // 미들웨어는 요청과 응답 사이에 실행되는 코드이다.
 app.use("/shop", require("./routes/shop.js"));
 app.use("/board/sub", require("./routes/board.js"));
+
+app.get("/upload", function (요청, 응답) {
+  응답.render("upload.ejs");
+});
+
+// 데이터를 쉽게 처리해주는 multer 라이브러리
+
+//multer.memoryStorage()를 하면 휘발성 메모리에 저장함
+var storage = multer.diskStorage({
+  //이미지 저장 경로 지정해주기
+  destination: function (req, file, cb) {
+    cb(null, "./public/image");
+  },
+  // 어떤 파일명으로 저장할 것인지 지정하기
+  // (여기서는 기존 이름유지)
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+// 위에서 설정한 것들을 upload 변수에 저장해서 가져다쓰면 됨
+var upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
+      return callback(new Error("PNG, JPG, JPEG만 업로드하세요"));
+    }
+    callback(null, true);
+  },
+  limits: {
+    fileSize: 1024 * 1024,
+  },
+});
+
+//multer를 미들웨어처럼 사용해주면 된다.
+//input의 name 속성을 받아와서 single() 안에적어준다.
+app.post("/upload", upload.single("profile"), function (요청, 응답) {
+  응답.send("업로드 완료!");
+});
+
+app.get("/image/:imgName", function (요청, 응답) {
+  응답.sendFile(__dirname + "/public/image/" + 요청.params.imgName);
+});
