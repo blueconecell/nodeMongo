@@ -265,3 +265,6 @@ app.post("/upload", upload.single("profile"), function (요청, 응답) {
 app.get("/image/:imgName", function (요청, 응답) {
   응답.sendFile(__dirname + "/public/image/" + 요청.params.imgName);
 });
+app.get("/chat", function (요청, 응답) {
+  응답.render("chat.ejs");
+});
