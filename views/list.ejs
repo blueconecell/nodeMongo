@@ -31,6 +31,19 @@
         <a class="h4" href="/detail/<%= posts[i]._id %>">할일 : <%= posts[i].title %></a>
         <p>마감일 : <%= posts[i].date %></p>
         <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">삭제</button>
+        <button
+          class="btn btn-primary"
+          type="button"
+          data-toggle="collapse"
+          data-target="#collapseExample_<%= posts[i]._id %>"
+          aria-expanded="false"
+          aria-controls="collapseExample"
+        >
+          댓글달기
+        </button>
+        <div class="collapse" id="collapseExample_<%= posts[i]._id %>">
+          <textarea class="form-control" name="chatContext"></textarea> <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
       </li>
       <% } %>
     </ul>
