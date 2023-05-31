@@ -21,11 +21,11 @@
       <div class="col-3">
         <ul class="list-group chat-list">
           <% for(var i=0; i < chats.length; i++) { %>
-          <li class="list-group-item" data-id="">
+          <li class="list-group-item" data-id="<%= chats[i]._id %>">
             <h6><%= chats[i].title %></h6>
-            <h6 class="text-small"><%= chats[i].member[0] %></h6>
-            <% } %>
+            <h6 class="text-small"><%= chats[i].member[0] %> <%= chats[i]._id %></h6>
           </li>
+          <% } %>
         </ul>
       </div>
 
@@ -45,33 +45,27 @@
     </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script>
-    $(".delete").click(function (e) {
-      var 글번호 = e.target.dataset.id;
-      var 지금누른거 = $(this);
-      $.ajax({
-        method: "DELETE",
-        url: "/delete", //요청할경로
-        data: { _id: 글번호 }, //요청과 함께 보낼데이터
-      })
-        .done(function (결과) {
-          console.log("성공한듯.");
-          지금누른거.parent("li").fadeOut();
-        })
-        .fail(function (a, b, c) {
-          console.log("실패");
-          console.log(a, b, c);
-        });
-    });
-  </script>
-  <script>
-    $("#search").click(function () {
-      var 입력값 = $("#search_input").val();
-      window.location.replace("/search?value=" + 입력값);
-      console.log("replace!!");
-    });
-  </script>
 
+  <script>
+    var 지금누른채팅방id;
+    $(".list-group-item").click(function () {
+      $(this).css("background-color", "#eee");
+      지금누른채팅방id = $(this).attr("data-id");
+      console.log("지금누른채팅방id : ");
+      console.log(지금누른채팅방id);
+    });
+
+    $("#send").click(function (e) {
+      var 채팅내용 = $("#chat-input").val();
+      var 보낼거 = {
+        parent: 지금누른채팅방id,
+        content: 채팅내용,
+      };
+      $.post("/message", 보낼거).then(() => {
+        console.log("전송성공");
+      });
+    });
+  </script>
   <!-- Optional JavaScript; choose one of the two! -->
 
   <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->

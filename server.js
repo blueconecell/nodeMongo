@@ -5,6 +5,7 @@ const methodOverride = require("method-override");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
+const { ObjectId } = require("mongodb");
 let multer = require("multer");
 require("dotenv").config;
 
@@ -127,6 +128,27 @@ app.post(
     응답.redirect("/");
   }
 );
+// gpt가 추천해준 게스트 로그인 구현해보기
+app.post("/guest-login", (요청, 응답) => {
+  const gid = "guest";
+  const gpw = "guest";
+
+  // 게스트로 로그인처리
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.send("/login-failure"); // 로그인 실패 시 리다이렉션할 URL
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect("/"); // 로그인 성공 시 리다이렉션할 URL
+    });
+  })(req, res, next);
+});
 
 // 마이페이지
 app.get("/mypage", 로그인했니, function (요청, 응답) {
@@ -292,20 +314,43 @@ app.get("/addChat", 로그인했니, function (요청, 응답) {
   응답.redirect("/list");
 });
 
-// app.post("/add", function (요청, 응답) {
-//   console.log(요청.body);
-//   db.collection("counter").findOne({ name: "게시물 갯수" }, function (에러, 결과) {
-//     console.log(결과.totalPost);
-//     var totalPost = 결과.totalPost;
-//     var 저장할거 = { _id: totalPost, title: 요청.body.title, date: 요청.body.date, author_name: 요청.user.id, author_id: 요청.user._id };
-//     db.collection("post").insertOne(저장할거, function (에러, 결과) {
-//       console.log("db저장완료");
+//선생님이 만든 chatroom
+app.post("/chatroom", 로그인했니, function (요청, 응답) {
+  console.log(요청.body.hostid);
+  console.log(ObjectId(요청.body.hostid));
+  var 저장할거 = {
+    title: "채팅방 이름",
+    member: [ObjectId(요청.body.hostid), 요청.user._id],
+    date: new Date(),
+  };
+  db.collection("chatroom")
+    .insertOne(저장할거)
+    .then((결과) => {
+      응답.send("성공");
+    });
+});
 
-//       db.collection("counter").updateOne({ name: "게시물 갯수" }, { $inc: { totalPost: 1 } }, function (에러, 결과) {
-//         if (에러) return console.log(에러);
-//       });
-//     });
-//   });
+app.post("/message", 로그인했니, function (요청, 응답) {
+  var 저장할거 = {
+    parent: 요청.body.parent,
+    content: 요청.body.content,
+    userid: 요청.user._id,
+    date: new Date(),
+  };
+  db.collection("message")
+    .insertOne(저장할거)
+    .then(() => {
+      console.log("db 저장성공");
+      응답.send("db저장성공");
+    });
+});
 
-//   응답.render("write.ejs");
-// });
+app.post(
+  "/guest",
+  passport.authenticate("local", {
+    failureRedirect: "/fail",
+  }),
+  function (요청, 응답) {
+    응답.redirect("/");
+  }
+);

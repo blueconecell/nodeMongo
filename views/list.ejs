@@ -33,6 +33,7 @@
         <p>author : <%= posts[i].author_name %></p>
         <!-- <a class="btn btn-danger delete" data-id="<%= posts[i]._id %>" type="button" href="/list">삭제</a> -->
         <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">삭제</button>
+        <button class="btn btn-secondary chat" data-id="<%= posts[i].author_id %>">채팅</button>
         <a href="/addChat" type="button" data-target="<%= posts[i]._id %>" class="btn btn-warning chating">채팅하기</a>
         <!-- <button class="btn btn-warning chating" type="button" data-target="#collapseExample_<%= posts[i]._id %>">채팅하기</button> -->
         <button
@@ -72,6 +73,14 @@
           console.log("실패");
           console.log(a, b, c);
         });
+    });
+  </script>
+  <script>
+    $(".chat").click(function (e) {
+      var id = e.target.dataset.id;
+      $.post("/chatroom", { hostid: id }).then(() => {
+        console.log("채팅기능 성공!");
+      });
     });
   </script>
   <script>
