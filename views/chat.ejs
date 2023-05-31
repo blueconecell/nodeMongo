@@ -20,13 +20,11 @@
     <div class="row">
       <div class="col-3">
         <ul class="list-group chat-list">
+          <% for(var i=0; i < chats.length; i++) { %>
           <li class="list-group-item" data-id="">
-            <h6>채팅방1</h6>
-            <h6 class="text-small">채팅방설명</h6>
-          </li>
-          <li class="list-group-item">
-            <h6>채팅방2</h6>
-            <h6 class="text-small">채팅방설명</h6>
+            <h6><%= chats[i].title %></h6>
+            <h6 class="text-small"><%= chats[i].member[0] %></h6>
+            <% } %>
           </li>
         </ul>
       </div>

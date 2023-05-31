@@ -86,7 +86,7 @@ app.get("/write", function (요청, 응답) {
   응답.render("write.ejs");
 });
 
-app.get("/detail/:postId", function (요청, 응답) {
+app.get("/detail/:postId", 로그인했니, function (요청, 응답) {
   db.collection("post").findOne({ _id: parseInt(요청.params.postId) }, function (에러, 결과) {
     console.log(결과);
     응답.render("detail.ejs", { data: 결과 });
@@ -141,7 +141,7 @@ function 로그인했니(요청, 응답, next) {
     console.log(요청.user);
     next();
   } else {
-    응답.send("로그인 안하셨는데요?");
+    응답.send("<script>alert('로그인안하셨는데요?'); window.location.replace('/');</script>");
   }
 }
 
@@ -192,7 +192,7 @@ app.post("/add", function (요청, 응답) {
   db.collection("counter").findOne({ name: "게시물 갯수" }, function (에러, 결과) {
     console.log(결과.totalPost);
     var totalPost = 결과.totalPost;
-    var 저장할거 = { _id: totalPost, title: 요청.body.title, date: 요청.body.date, author: 요청.user._id };
+    var 저장할거 = { _id: totalPost, title: 요청.body.title, date: 요청.body.date, author_name: 요청.user.id, author_id: 요청.user._id };
     db.collection("post").insertOne(저장할거, function (에러, 결과) {
       console.log("db저장완료");
 
@@ -205,7 +205,7 @@ app.post("/add", function (요청, 응답) {
   응답.render("write.ejs");
 });
 
-app.delete("/delete", function (요청, 응답) {
+app.delete("/delete", 로그인했니, function (요청, 응답) {
   요청.body._id = parseInt(요청.body._id);
 
   var 삭제할데이터 = { _id: 요청.body._id, author: 요청.user._id };
@@ -266,5 +266,46 @@ app.get("/image/:imgName", function (요청, 응답) {
   응답.sendFile(__dirname + "/public/image/" + 요청.params.imgName);
 });
 app.get("/chat", function (요청, 응답) {
-  응답.render("chat.ejs");
+  db.collection("chatroom")
+    .find({ member: 요청.user._id })
+    .toArray(function (에러, 결과) {
+      console.log("결과 : ");
+      console.log(결과);
+
+      응답.render("chat.ejs", { chats: 결과 });
+    });
 });
+
+app.get("/addChat", 로그인했니, function (요청, 응답) {
+  console.log("요청.body : ");
+  console.log(요청.body);
+  console.log("요청.user : ");
+  console.log(요청.user);
+  console.log("요청.target : ");
+  console.log(요청.target);
+  console.log("게시물 제목을 예상 : " + 요청.body.title);
+
+  var 저장할거 = { member: [요청.user.id, 요청.user._id], date: Date.now(), title: 요청.body.title + "의 채팅방" };
+  db.collection("chatroom").insertOne(저장할거, function (에러, 결과) {
+    console.log("chatroom 저장완료!");
+  });
+  응답.redirect("/list");
+});
+
+// app.post("/add", function (요청, 응답) {
+//   console.log(요청.body);
+//   db.collection("counter").findOne({ name: "게시물 갯수" }, function (에러, 결과) {
+//     console.log(결과.totalPost);
+//     var totalPost = 결과.totalPost;
+//     var 저장할거 = { _id: totalPost, title: 요청.body.title, date: 요청.body.date, author_name: 요청.user.id, author_id: 요청.user._id };
+//     db.collection("post").insertOne(저장할거, function (에러, 결과) {
+//       console.log("db저장완료");
+
+//       db.collection("counter").updateOne({ name: "게시물 갯수" }, { $inc: { totalPost: 1 } }, function (에러, 결과) {
+//         if (에러) return console.log(에러);
+//       });
+//     });
+//   });
+
+//   응답.render("write.ejs");
+// });
