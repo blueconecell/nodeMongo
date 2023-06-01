@@ -61,8 +61,12 @@
         parent: 지금누른채팅방id,
         content: 채팅내용,
       };
+      console.log("지금누른채팅방id : ");
+      console.log(지금누른채팅방id);
       $.post("/message", 보낼거).then(() => {
         console.log("전송성공");
+        console.log("보낼거");
+        console.log(보낼거);
       });
     });
   </script>

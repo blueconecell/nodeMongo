@@ -128,27 +128,6 @@ app.post(
     응답.redirect("/");
   }
 );
-// gpt가 추천해준 게스트 로그인 구현해보기
-app.post("/guest-login", (요청, 응답) => {
-  const gid = "guest";
-  const gpw = "guest";
-
-  // 게스트로 로그인처리
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.send("/login-failure"); // 로그인 실패 시 리다이렉션할 URL
-    }
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      return res.redirect("/"); // 로그인 성공 시 리다이렉션할 URL
-    });
-  })(req, res, next);
-});
 
 // 마이페이지
 app.get("/mypage", 로그인했니, function (요청, 응답) {
@@ -345,12 +324,24 @@ app.post("/message", 로그인했니, function (요청, 응답) {
     });
 });
 
-app.post(
-  "/guest",
-  passport.authenticate("local", {
-    failureRedirect: "/fail",
-  }),
-  function (요청, 응답) {
-    응답.redirect("/");
-  }
-);
+// // gpt가 추천해준 게스트 로그인 구현해보기
+// app.post("/login-guest", (요청, 응답, 다음) => {
+//   const gid = "guest";
+//   const gpw = "guest";
+
+//   // 게스트로 로그인 처리
+//   passport.authenticate("local", (err, user, info) => {
+//     if (err) {
+//       return 다음(err);
+//     }
+//     if (!user) {
+//       return 응답.redirect("/login"); // 로그인 실패 시 리다이렉션할 URL
+//     }
+//     요청.logIn(user, (err) => {
+//       if (err) {
+//         return 다음(err);
+//       }
+//       return 응답.redirect("/"); // 로그인 성공 시 리다이렉션할 URL
+//     });
+//   })(요청, 응답, 다음);
+// });
