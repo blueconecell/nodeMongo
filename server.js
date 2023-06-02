@@ -277,6 +277,35 @@ app.get("/chat", function (요청, 응답) {
     });
 });
 
+// // gpt의 2개이상의 컬랙션 사용하기
+// app.get("/chat", function (요청, 응답) {
+//   db.collection("chatroom")
+//     .find({ member: 요청.user._id })
+//     .toArray(function (에러, chatrooms) {
+//       if (에러) {
+//         console.error(에러);
+//         return 응답.status(500).send("서버 오류");
+//       }
+
+//       // chatrooms 컬렉션에서 멤버 ID로 검색한 결과를 가져옴
+//       const memberChatrooms = chatrooms.map((chatroom) => chatroom._id);
+
+//       db.collection("chat")
+//         .find({ chatroom: { $in: memberChatrooms } })
+//         .toArray(function (에러, chats) {
+//           if (에러) {
+//             console.error(에러);
+//             return 응답.status(500).send("서버 오류");
+//           }
+
+//           console.log("채팅 결과: ");
+//           console.log(chats);
+
+//           응답.render("chat.ejs", { chats: chats });
+//         });
+//     });
+// });
+
 app.get("/addChat", 로그인했니, function (요청, 응답) {
   console.log("요청.body : ");
   console.log(요청.body);
