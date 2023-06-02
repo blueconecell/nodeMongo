@@ -48,11 +48,19 @@
 
   <script>
     var 지금누른채팅방id;
+    var eventSource;
     $(".list-group-item").click(function () {
       $(this).css("background-color", "#eee");
       지금누른채팅방id = $(this).attr("data-id");
       console.log("지금누른채팅방id : ");
       console.log(지금누른채팅방id);
+
+      eventSource = new EventSource('/message/'+지금누른채팅방id)
+      eventSource.addEventListener('test',function(e){
+        var datas = JSON.parse(e.data)
+        console.log(datas)
+        console.log(datas.length)
+      })
     });
 
     $("#send").click(function (e) {

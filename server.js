@@ -353,24 +353,21 @@ app.post("/message", 로그인했니, function (요청, 응답) {
     });
 });
 
-// // gpt가 추천해준 게스트 로그인 구현해보기
-// app.post("/login-guest", (요청, 응답, 다음) => {
-//   const gid = "guest";
-//   const gpw = "guest";
+app.get('/message/:id', 로그인했니, function(요청,응답){
 
-//   // 게스트로 로그인 처리
-//   passport.authenticate("local", (err, user, info) => {
-//     if (err) {
-//       return 다음(err);
-//     }
-//     if (!user) {
-//       return 응답.redirect("/login"); // 로그인 실패 시 리다이렉션할 URL
-//     }
-//     요청.logIn(user, (err) => {
-//       if (err) {
-//         return 다음(err);
-//       }
-//       return 응답.redirect("/"); // 로그인 성공 시 리다이렉션할 URL
-//     });
-//   })(요청, 응답, 다음);
-// });
+  응답.writeHead(200,{
+    "Connection":"keep-alive",
+    "Content-type":"text/event-stream",
+    "Cache-Control":"no-cache"
+  })
+  console.log("요청.params : ")
+  console.log(요청.params)
+  db.collection('message').find({parent : 요청.params.id}).toArray().then((결과)=>{
+    
+  응답.write('event: test\n')
+  응답.write('data: '+JSON.stringify(결과)+'\n\n')
+  })
+
+
+
+})
