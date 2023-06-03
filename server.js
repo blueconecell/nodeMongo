@@ -411,3 +411,7 @@ io.on("connection", function (socket) {
     // io.to(socket.id).emit("broadcast", data)~~~~
   });
 });
+
+app.get("*", function (요청, 응답) {
+  응답.redirect("/");
+});
