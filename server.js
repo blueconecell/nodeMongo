@@ -6,6 +6,10 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { ObjectId } = require("mongodb");
+const http = require("http").createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(http);
+
 let multer = require("multer");
 require("dotenv").config;
 
@@ -31,7 +35,7 @@ MongoClient.connect(
     // db.collection("post").insertOne({ 이름: "JeongYeon", 나이: 24 }, function (에러, 결과) {
     //   console.log("db저장완료");
     // });
-    app.listen(8080, function () {
+    http.listen(8080, function () {
       console.log("listening on 8080");
     });
 
@@ -359,6 +363,7 @@ app.get("/message/:id", 로그인했니, function (요청, 응답) {
     "Content-type": "text/event-stream",
     "Cache-Control": "no-cache",
   });
+
   console.log("요청.params : ");
   console.log(요청.params);
   db.collection("message")
@@ -368,4 +373,41 @@ app.get("/message/:id", 로그인했니, function (요청, 응답) {
       응답.write("event: test\n");
       응답.write("data: " + JSON.stringify(결과) + "\n\n");
     });
+  const pipeline = [{ $match: { "fullDocument.parent": 요청.params.id } }];
+  const collection = db.collection("message");
+  const changeStream = collection.watch(pipeline);
+
+  changeStream.on("change", (result) => {
+    console.log("result");
+    console.log(result);
+    console.log("result.fullDocument");
+    console.log(result.fullDocument);
+    응답.write("event: test\n");
+    응답.write("data: " + JSON.stringify([result.fullDocument]) + "\n\n");
+  });
+});
+
+app.get("/socket", function (요청, 응답) {
+  응답.render("socket.ejs");
+});
+
+io.on("connection", function (socket) {
+  console.log("socket connected!");
+
+  socket.on("room1-send", function (data) {
+    io.to("room1").emit("broadcast", data);
+  });
+
+  socket.on("joinroom", function (data) {
+    console.log("room1");
+    socket.join("room1");
+  });
+
+  socket.on("user-send", function (data) {
+    console.log(data);
+    io.emit("broadcast", data);
+    // 원하는 사람 1명과 대화하고 싶을 때 socket id를 이용하여 확인
+    // socket.id를 콘솔에 찍어보자
+    // io.to(socket.id).emit("broadcast", data)~~~~
+  });
 });

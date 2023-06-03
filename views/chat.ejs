@@ -53,16 +53,27 @@
     var liTag;
     var ulTag;
     $(".list-group-item").click(function () {
+      ulTag = $("ul.chat-content");
+      ulTag.empty();
       $(this).css("background-color", "#eee");
       지금누른채팅방id = $(this).attr("data-id");
       console.log("지금누른채팅방id : ");
       console.log(지금누른채팅방id);
-
+      if (eventSource != undefined) {
+        eventSource.close();
+      }
       eventSource = new EventSource("/message/" + 지금누른채팅방id);
       eventSource.addEventListener("test", function (e) {
         var datas = JSON.parse(e.data);
-        ulTag = $("ul.chat-content");
-        ulTag.empty();
+
+        // //선생님이 한거
+        // $(".chat-content").html("");
+        // var 가져온거 = JSON.parse(e.data);
+        // 가져온거.forEach(function (i) {
+        //   $(".chat-content").append('<li><span class="chat-box">' + i.content + "</span></li>");
+        // });
+
+        //내가한거
         $.each(datas, function (index, value) {
           console.log(datas[index].content);
           console.log("datas[index].content");
